@@ -30,18 +30,17 @@ public abstract class Pathfind {
         bugDir = null;
     }
     
-    public static void bugNavTwo(RobotController rc, MapLocation destination) throws GameActionException {
+    public static void bugNavTwo(RobotController rc, MapLocation destination, Direction bugDir) throws GameActionException {
         if(!destination.equals(prevDest)) {
             prevDest = destination;
             line = createLine(rc.getLocation(), destination);
         }
-        // for(MapLocation loc: line) {
-        //     rc.setIndicatorDot(loc, 255, 0, 0);
-        // }
+        for(MapLocation loc: line) {
+            rc.setIndicatorDot(loc, 255, 0, 0);
+        }
 
         if(bugState == 0) {
-            bugDir = rc.getLocation().directionTo(destination);
-            if(rc.canMove(bugDir)) rc.move(bugDir);
+            if(rc.canMove(bugDir)) {rc.move(bugDir); return;}
             else{
                 bugState = 1;
                 obstacleStartDist = rc.getLocation().distanceSquaredTo(destination);
@@ -55,61 +54,12 @@ public abstract class Pathfind {
                 if(rc.canMove(bugDir)){
                     rc.move(bugDir);
                     bugDir = bugDir.rotateRight();
-                    bugDir = bugDir.rotateRight();
                     break;
                 }
                 else {
                     bugDir = bugDir.rotateLeft();
                 }
             }
-        }
-    }
-
-    public static void bugNavOne(RobotController rc, MapLocation destination) throws GameActionException {
-        if(bugState == 0){
-            bugDir = rc.getLocation().directionTo(destination);
-            if(rc.canMove(bugDir)) rc.move(bugDir);
-            else{
-                bugState = 1;
-                closestObstacle = null;
-                closestObstacleDist = 1000;
-            }
-        }
-        else{
-            if(rc.getLocation().equals(closestObstacle)) bugState = 0;
-            if(rc.getLocation().distanceSquaredTo(destination) < closestObstacleDist){
-                closestObstacleDist = rc.getLocation().distanceSquaredTo(destination);
-                closestObstacle = rc.getLocation();
-            }
-            for(int i = 0; i < 9; i++){
-                if(rc.canMove(bugDir)){
-                    rc.move(bugDir);
-                    bugDir = bugDir.rotateRight();
-                    bugDir = bugDir.rotateRight();
-                    break;
-                }
-                else {
-                    bugDir = bugDir.rotateLeft();
-                }
-            }
-        }
-    }
-    
-    
-    public static void bugNavZero(RobotController rc, MapLocation destination) throws GameActionException {
-        Direction bugDir = rc.getLocation().directionTo(destination);
-
-        if(rc.canMove(bugDir)) rc.move(bugDir);
-        else{
-            for(int i = 0; i < 8; i++){
-                if(rc.canMove(bugDir)){
-                    rc.move(bugDir);
-                    break;
-                }   
-                else{
-                    bugDir = bugDir.rotateLeft();
-                }
-            }    
         }
     }
 
@@ -124,35 +74,7 @@ public abstract class Pathfind {
         if(rc.isMovementReady()) {
             direction = rc.getLocation().directionTo(target);
             if(rc.canMove(direction)) rc.move(direction);
-            else if(target != null) {
-                direction = direction.rotateLeft();
-                if(rc.canMove(direction)) {
-                    rc.move(direction);
-                    return;
-                }
-                direction = direction.rotateRight();
-                direction = direction.rotateRight();
-                if(rc.canMove(direction)) {
-                    rc.move(direction);
-                    return;
-                }
-                direction = direction.rotateLeft();
-                direction = direction.rotateLeft();
-                direction = direction.rotateLeft();
-                if(rc.canMove(direction)) {
-                    rc.move(direction);
-                    return;
-                }
-
-                direction = direction.rotateRight();
-                direction = direction.rotateRight();
-                direction = direction.rotateRight();
-                direction = direction.rotateRight();
-                if(rc.canMove(direction)) {
-                    rc.move(direction);
-                    return;
-                }
-            }
+            
             else{
                 direction = RobotPlayer.directions[RobotPlayer.rng.nextInt(8)];
                 for(int i = 0 ; i < 8; i++){

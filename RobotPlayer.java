@@ -15,8 +15,9 @@ import java.util.Set;
 public class RobotPlayer {
     static boolean isMassenger = false;
     static int turnCount = 0;
-    static ArrayList<MapLocation> knownTowers = new ArrayList<>();
-    public static Random rng = null;
+    static ArrayList<Integer> knownAllyTowers = new ArrayList<>();
+    static ArrayList<Integer> knownEnemyTowers = new ArrayList<>();
+    public static Random rng = new Random();
     static final int r = 9;
 
     static final Direction[] directions = {
@@ -41,8 +42,6 @@ public class RobotPlayer {
 
             turnCount += 1;  
             try {
-
-                if(rng == null) rng = new Random(rc.getID());
 
                 switch (rc.getType()){
                     case SOLDIER: Strategy.runSoldier(rc); break; 
